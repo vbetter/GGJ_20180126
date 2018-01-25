@@ -81,6 +81,9 @@ public class Actor : MonoBehaviour
         }
     }
 
+    public eCamp Camp = eCamp.None;
+
+
     // Use this for initialization
     void Start () {
 		
@@ -120,6 +123,7 @@ public class Actor : MonoBehaviour
         LastState = CurrentState;
         CurrentState = state;
 
+        if(m_animator!=null)
         m_animator.SetTrigger(state.ToString());
 
     }

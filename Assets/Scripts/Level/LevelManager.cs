@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : Template.MonoSingleton<LevelManager> {
+public class LevelManager : Template.MonoSingleton<LevelManager>
+{
 
     public int CurLevel = 1;
 
     [SerializeField]
-    GameObject m_ClonePlayer;
+    GameObject m_ClonePlanner, m_CloneProgrammer, m_CloneArtist, m_CloneBoss;
 
     List<Player> m_playerList = new List<Player>();
     public List<Player> AllPlayerList
@@ -20,18 +21,19 @@ public class LevelManager : Template.MonoSingleton<LevelManager> {
     }
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         SceneManager.activeSceneChanged += OnSceneChanged;
-        
+
         InitLevel();
 
-    
+
     }
-	
-    void OnSceneChanged(Scene lastScene ,Scene curScene)
+
+    void OnSceneChanged(Scene lastScene, Scene curScene)
     {
-        if(curScene.name == "game")
+        if (curScene.name == "game")
         {
             InitLevel();
             print("game");
@@ -53,7 +55,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager> {
 
     public void Clear()
     {
-        if(m_playerList.Count>0)
+        if (m_playerList.Count > 0)
         {
             for (int i = 0; i < m_playerList.Count; i++)
             {
@@ -90,22 +92,22 @@ public class LevelManager : Template.MonoSingleton<LevelManager> {
         int count = GameManager.Instance.SelectPlayerCount;
 
         GameObject[] posArray = GetPlayerBirthPosition();
-        if(posArray==null || posArray.Length<count)
+        if (posArray == null || posArray.Length < count)
         {
             Debug.LogError("BirthPosition init Error");
             return;
         }
 
-        if (count > 0 && count < 4)
+        if (count > 0 && count <= 4)
         {
             for (int i = 0; i < count; i++)
             {
-                GameObject go = CreatePlayer();
-                if(go!=null)
+                GameObject go = CreatePlayer((ePlayerType)i);
+                if (go != null)
                 {
                     go.transform.localPosition = posArray[i].transform.localPosition;
-                    Player player= go.GetComponent<Player>();
-                    player.Init(i+1);
+                    Player player = go.GetComponent<Player>();
+                    player.Init(i + 1);
                     m_playerList.Add(player);
                     EffectMgr.Instance.CreateEffect(eEffectType.Birth, null, 1f, player.transform.localPosition);
                 }
@@ -117,12 +119,29 @@ public class LevelManager : Template.MonoSingleton<LevelManager> {
         }
     }
 
-    GameObject CreatePlayer()
+    GameObject CreatePlayer(ePlayerType type)
     {
-        if (m_ClonePlayer == null) return null;
+        GameObject go = null;
+        switch (type)
+        {
+            case ePlayerType.None:
+                break;
+            case ePlayerType.Programmer:
+                go = Instantiate(m_CloneProgrammer);
+                break;
+            case ePlayerType.Planner:
+                go = Instantiate(m_ClonePlanner);
+                break;
+            case ePlayerType.Artist:
+                go = Instantiate(m_CloneArtist);
+                break;
+            case ePlayerType.Boss:
+                go = Instantiate(m_CloneBoss);
+                break;
+            default:
+                break;
+        }
 
-
-        GameObject go = Instantiate(m_ClonePlayer);
         return go;
     }
 

@@ -3,7 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using CreativeSpore.SmartColliders;
+/// <summary>
+/// 玩家类型
+/// </summary>
+public enum ePlayerType
+{
+    Programmer,
+    Planner,
+    Artist,
+    Boss,//由玩家扮演的boss
+    None,
+}
 
+/// <summary>
+/// 阵营
+/// </summary>
+public enum eCamp
+{
+    None,
+    Player,
+    Enemy,
+    Neutral,
+}
 public class Player : Actor
 {
     public int PlayerNumber = 0;

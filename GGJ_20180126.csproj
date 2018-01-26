@@ -269,6 +269,10 @@
     <Compile Include="Assets\Scripts\ActorBehaviour\IdleBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\JumpBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\PatrolBehaviour.cs" />
+    <Compile Include="Assets\Scripts\ActorBehaviour\Player\PlayerBehaviour.cs" />
+    <Compile Include="Assets\Scripts\ActorBehaviour\Player\PlayerComaState.cs" />
+    <Compile Include="Assets\Scripts\ActorBehaviour\Player\PlayerIdleBehaviour.cs" />
+    <Compile Include="Assets\Scripts\ActorBehaviour\Player\PlayerMoveBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\RunBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\ScrollBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\SnowBehaviour.cs" />

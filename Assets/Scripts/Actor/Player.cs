@@ -36,10 +36,16 @@ public class Player : Actor
 
     string m_Fire1 = "Fire1";
 
+    protected Rigidbody2D m_Rigidbody2D;
+
     // Use this for initialization
     void Start () {
-		
-	}
+        m_Rigidbody2D = GetComponent<Rigidbody2D>();
+        m_animator = GetComponent<Animator>();
+        m_SmartPlatformController = GetComponent<SmartPlatformController>();
+
+        SetState(eActorState.Idle);
+    }
 
     public void Init(int p)
     {
@@ -57,5 +63,20 @@ public class Player : Actor
         EffectMgr.Instance.CreateEffect(eEffectType.Boom, null, 1f, transform.localPosition);
 
         LevelManager.Instance.RemovePlayer(PlayerNumber);
+    }
+
+    public override void OnHit(BulletMsg msg)
+    {
+        if (CurrentState == eActorState.Coma)
+            return;
+
+        HP -= msg.damage;
+        Debug.Log(string.Format("{0} OnHit ,HP:{1}",gameObject.name,HP));
+        EffectMgr.Instance.CreateEffect(eEffectType.Boom, null, 1f, transform.localPosition);
+
+        if (HP <= 0 && CurrentState != eActorState.Coma)
+        {
+            SetState(eActorState.Coma);
+        }
     }
 }

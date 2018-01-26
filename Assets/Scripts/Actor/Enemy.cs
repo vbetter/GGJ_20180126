@@ -62,11 +62,6 @@ public class Enemy : Actor
        
     }
 
-    public void DisableCurrentState()
-    {
-        m_animator.SetBool(CurrentState.ToString(), false);
-    }
-
 
     public void Flip()
     {
@@ -83,19 +78,12 @@ public class Enemy : Actor
         //Debug.LogError(log);
         if (go.tag == "Player")
         {
-            if (CurrentState == eActorState.Idle || CurrentState == eActorState.Run)
-            {
-                //SetState(eActorState.Die);
-                Debug.LogError("YouDie:" + go.name);
-                Player player = go.GetComponent<Player>();
-                player.OnDie();
-            }
-            else
-            {
+            BulletMsg msg = new BulletMsg();
+            msg.sender = gameObject;
+            msg.damage = Power;
+            Player player = go.GetComponent<Player>();
+            player.OnHit(msg);
 
-
-
-            }
         }
     }
 

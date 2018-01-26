@@ -81,6 +81,19 @@ public class Actor : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 攻击力
+    /// </summary>
+    protected int m_power = 1;
+    public int Power
+    {
+        get
+        {
+            return m_power;
+        }
+    }
+
+
     public eCamp Camp = eCamp.None;
 
 
@@ -121,10 +134,16 @@ public class Actor : MonoBehaviour
     {
         //Debug.Log("state:" + state);
         LastState = CurrentState;
-        CurrentState = state;
 
         if(m_animator!=null)
-        m_animator.SetTrigger(state.ToString());
+        {
+            CurrentState = state;
+            m_animator.SetTrigger(state.ToString());
+        }
+    }
 
+    public void DisableCurrentState()
+    {
+        
     }
 }

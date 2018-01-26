@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class LevelManager : Template.MonoSingleton<LevelManager>
 {
 
+    public bool m_isGameOver = false;
+
     public int CurLevel = 1;
 
     [SerializeField]
@@ -20,6 +22,10 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
         }
     }
 
+    [SerializeField]
+    GameObject m_CloneBall;
+
+    public Ball m_ball = null;
 
     // Use this for initialization
     void Start()
@@ -51,6 +57,19 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
     public void InitLevel()
     {
         initPlayers();
+        initBall();
+
+
+    }
+
+    void initBall()
+    {
+        GameObject go = Instantiate(m_CloneBall);
+        if(go!=null)
+        {
+            m_ball = go.GetComponent<Ball>();
+            m_ball.transform.position = new Vector3(0, -5.3f, 0);
+        }
     }
 
     public void Clear()
@@ -152,4 +171,6 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
         return childs;
 
     }
+
+    
 }

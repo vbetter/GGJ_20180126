@@ -108,6 +108,7 @@ public class Actor : MonoBehaviour
 
     public eCamp Camp = eCamp.None;
 
+    public eColor Color = eColor.None;
 
     // Use this for initialization
     void Start () {

@@ -38,6 +38,18 @@ public enum ePosistion
     //RightDown,
 }
 
+/// <summary>
+/// 游戏中定义3中主色
+/// </summary>
+public enum eColor
+{
+	None,
+	Blue,
+	Red,
+	Yellow
+}
+
+
 public class Actor : MonoBehaviour
 {
 

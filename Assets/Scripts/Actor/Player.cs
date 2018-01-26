@@ -79,4 +79,38 @@ public class Player : Actor
             SetState(eActorState.Coma);
         }
     }
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		GameObject go = collision.gameObject;
+		string log = string.Format("go : {0} , tag : {1}",go.name ,go.tag);
+		//Debug.LogError(log);
+		if (go.tag == "Ball")
+		{
+			/*
+			BulletMsg msg = new BulletMsg();
+			msg.sender = gameObject;
+			msg.damage = Power;
+			Player player = go.GetComponent<Player>();
+			player.OnHit(msg);
+			*/
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		GameObject go = collision.gameObject;
+		string log = string.Format("go : {0} , tag : {1}",go.name ,go.tag);
+		//Debug.LogError(log);
+		if (go.tag == "Ball")
+		{
+			/*
+			BulletMsg msg = new BulletMsg();
+			msg.sender = gameObject;
+			msg.damage = Power;
+			Player player = go.GetComponent<Player>();
+			player.OnHit(msg);
+			*/
+		}
+	}
 }

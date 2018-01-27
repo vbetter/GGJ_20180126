@@ -158,8 +158,26 @@ namespace CreativeSpore.SmartColliders
 
         #region MonoBehaviour Methods
 
-        [SerializeField]
+        
         bool m_isController = true;//能够被控制
+		public bool IsController{
+			get
+			{
+				if(m_GameManager!=null && m_GameManager.IsPause)
+				{
+					return false;
+				}
+
+				if(m_player!=null)
+				{
+					
+				}
+				return m_isController;
+			}
+			set{
+				m_isController = value;
+			}
+		}
 
         const string KeyHorizontal = "Horizontal";
         const string KeyVertical = "Vertical";
@@ -177,6 +195,8 @@ namespace CreativeSpore.SmartColliders
 
         int m_PlayerNumber = 0;
 
+		Player m_player = null;
+
         public void Init(int p)
         {
             m_PlayerNumber = p;
@@ -190,6 +210,8 @@ namespace CreativeSpore.SmartColliders
             m_Jump = KeyJump + pStr;
         }
 
+		GameManager m_GameManager;
+
         // Use this for initialization
         void Start()
         {
@@ -199,6 +221,8 @@ namespace CreativeSpore.SmartColliders
 
             m_animator = GetComponent<Animator>();
             m_smartRectCollider = GetComponent<SmartPlatformCollider>();
+			m_player = GetComponent<Player>();
+
             m_walkingDrag = m_rigidBody2D.drag;
 
             // Add an offset to horizontal raycasts to avoid missing collisions with lateral moving platforms
@@ -207,7 +231,12 @@ namespace CreativeSpore.SmartColliders
 
             OnStateChanged += _OnStateChanged;
             SetNextState(eState.Idle);
+
+			m_GameManager = GameManager.Instance;
+
         }
+
+
 
         private void _OnStateChanged(SmartPlatformController source, eState prevState, eState newState)
         {
@@ -320,7 +349,7 @@ namespace CreativeSpore.SmartColliders
                 m_fallingJumpToleranceTimer = FallingJumpTolerance;
             }
 
-            if(m_isController)
+            if(IsController)
             {
                 if (State != eState.Dying)
                 {

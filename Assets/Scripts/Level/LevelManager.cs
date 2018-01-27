@@ -172,5 +172,37 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
     }
 
-    
+	#region 暂停/恢复
+	[SerializeField]
+	UIMain m_main;
+	public void GameOver()
+	{
+		GameManager.Instance.IsPause = true;
+
+		m_main.ShowGameOver();
+	}
+
+
+	public void PauseGame()
+	{
+		m_main.ShowPauseUI(true);
+	}
+
+	public void ResumeGame()
+	{
+		m_main.ShowPauseUI(false);
+	}
+	#endregion
+
+
+
+	#region 倒计时
+
+	public float currentTimer =0f;
+	public float MaxTime = 30f;
+
+
+
+	#endregion
+
 }

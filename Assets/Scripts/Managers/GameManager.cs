@@ -17,11 +17,11 @@ public class GameManager : Template.MonoSingleton<GameManager> {
         {
             if(value)
             {
-                Time.timeScale = 1;
+                Time.timeScale = 0;
             }
             else
             {
-                Time.timeScale = 0;
+                Time.timeScale = 1;
             }
             m_isPause = value;
         }
@@ -34,5 +34,18 @@ public class GameManager : Template.MonoSingleton<GameManager> {
         StartCoroutine(EffectMgr.Instance.LoadData());
     }
 	
+	public void PauseGame()
+	{
+		IsPause = true;
+	}
 
+	public void ResumeGame()
+	{
+		IsPause = false;
+	}
+
+	public void ResetGame()
+	{
+		
+	}
 }

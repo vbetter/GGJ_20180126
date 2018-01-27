@@ -20,10 +20,11 @@ public class PlayerControl : MonoBehaviour {
 
     Player m_player;
 
+	GameManager m_GameManager;
     // Use this for initialization
     void Start () {
         m_player = GetComponent<Player>();
-
+		m_GameManager = GameManager.Instance;
     }
 
     public void Init(int p)
@@ -42,12 +43,15 @@ public class PlayerControl : MonoBehaviour {
             m_interval += Time.deltaTime;
         }
 
-        if ((Input.GetKey(Utils.GetKeyCodeByPlayer(KeyFire1, m_PlayerNumber))) && m_interval>= m_interval_Max)
-        {
-            m_interval = 0;
-            //Debug.Log(m_fireName);
-            PlaySkill();
-        }
+		if(!m_GameManager.IsPause)
+		{
+			if ((Input.GetKey(Utils.GetKeyCodeByPlayer(KeyFire1, m_PlayerNumber))) && m_interval>= m_interval_Max)
+			{
+				m_interval = 0;
+				//Debug.Log(m_fireName);
+				PlaySkill();
+			}	
+		}
 
     }
 

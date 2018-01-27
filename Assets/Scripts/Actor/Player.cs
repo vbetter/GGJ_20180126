@@ -102,9 +102,22 @@ public class Player : Actor
 		{
             if (gameObject.tag == "Boss")
             {
+				//如果我是boss，并且我碰到了蛋，游戏结束
                 Debug.Log("Game Over");
+				LevelManager.Instance.GameOver();
+
             }
-        }
+		}else if(go.tag =="Boss")
+		{
+			//如果我身上有蛋，游戏结束
+			if(m_ball!=null)
+			{
+				Debug.Log("Game Over");
+
+				LevelManager.Instance.GameOver();
+
+			}
+		}
 	}
 
     private void OnTriggerStay2D(Collider2D collision)

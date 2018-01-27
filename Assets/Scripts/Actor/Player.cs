@@ -27,7 +27,7 @@ public enum eCamp
 }
 public class Player : Actor
 {
-    public int PlayerNumber = 0;
+	public ePlayerType PlayerType = ePlayerType.None;
 
     SmartPlatformController m_SmartPlatformController;
     PlayerControl m_PlayerControl;
@@ -60,22 +60,22 @@ public class Player : Actor
         m_SmartPlatformCollider.OnSideCollision = OnSideCollisionDelegate;
     }
 
-    public void Init(int p)
+	public void Init(ePlayerType type,int psIndex)
     {
-        PlayerNumber = p;
+		PlayerType = type;
 
         m_SmartPlatformController = GetComponent<SmartPlatformController>();
-        m_SmartPlatformController.Init(p);
+		m_SmartPlatformController.Init(psIndex);
 
         m_PlayerControl = GetComponent<PlayerControl>();
-        m_PlayerControl.Init(p);
+		m_PlayerControl.Init(psIndex);
     }
 
     public void OnDie()
     {
         EffectMgr.Instance.CreateEffect(eEffectType.Boom, null, 1f, transform.localPosition);
 
-        LevelManager.Instance.RemovePlayer(PlayerNumber);
+        LevelManager.Instance.RemovePlayer(PlayerType);
     }
 
     public override void OnHit(BulletMsg msg)
@@ -186,6 +186,9 @@ public class Player : Actor
         }
         else
         {
+			if(LevelManager.Instance.m_ball==null)
+				return;
+			
             BoxCollider2D box = LevelManager.Instance.m_ball.m_BoxCollider2D;
             //手上无球
             if(box!=null)
@@ -196,5 +199,72 @@ public class Player : Actor
                 }
             }
         }
+			
     }
+
+	/// <summary>
+	/// 改变颜色
+	/// </summary>
+	public void ChangeColor()
+	{
+		int color =(int)Color ;
+		color++;
+		if(color>(int)eColor.None)
+		{
+			color =0;
+		}
+		Color = (eColor)color ;
+		Debug.Log("ChangeColor:"+Color);
+
+		//改变颜色
+
+	}
+
+
+	bool m_isTransmissionING = false;
+	/// <summary>
+	/// 传送
+	/// </summary>
+	public IEnumerator Transmission()
+	{
+		//如果正在传送
+		if(m_isTransmissionING )
+			yield break;
+		
+		if(Color == eColor.None)
+			yield break;
+		
+		Vector3 pos = LevelManager.Instance.GetPlayerPositionByColor(Color);
+		if(pos!=Vector3.zero)
+		{
+			m_SmartPlatformCollider.EnableCollision2D = false;
+			m_SmartPlatformCollider.EnableCollision3D = false;
+			m_Rigidbody2D.simulated = false;
+			m_isTransmissionING = true;
+			yield return new WaitForSeconds(1.5f);
+			Debug.Log("Transmission pos:"+pos);
+			transform.localPosition = new Vector3(pos.x,pos.y+0.5f,pos.z);
+
+			yield return new WaitForSeconds(1f);
+			m_isTransmissionING= false;
+			m_SmartPlatformCollider.EnableCollision2D = true;
+			m_SmartPlatformCollider.EnableCollision3D = true;
+			m_Rigidbody2D.simulated = true;
+		}
+
+		//Debug.Log("Transmission");
+
+		yield return null;
+	}
+
+	public bool IsController
+	{
+		get
+		{
+			if(m_isTransmissionING)
+				return false;
+			
+			return true;
+		}
+	}
 }

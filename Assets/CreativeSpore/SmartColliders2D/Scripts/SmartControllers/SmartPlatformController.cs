@@ -170,8 +170,9 @@ namespace CreativeSpore.SmartColliders
 
 				if(m_player!=null)
 				{
-					
+					return m_player.IsController;
 				}
+
 				return m_isController;
 			}
 			set{

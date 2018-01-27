@@ -8,7 +8,7 @@ public class UILogin : MonoBehaviour {
     GameObject m_startBtn;
 
     [SerializeField]
-    UIToggle m_toggleP1, m_toggleP2, m_toggleP3;
+    UIToggle m_toggleP1, m_toggleP2, m_toggleP3,m_toggleP4;
 
     // Use this for initialization
     void Start () {
@@ -23,34 +23,39 @@ public class UILogin : MonoBehaviour {
     void StartGame()
     {
         int count = GameManager.Instance.SelectPlayerCount;
-        if (count <= 0 || count >3)
+        if (count >= 2 || count <=4)
         {
-            Debug.LogError("Error SelectPlayerCount:" + count);
-            return;
-        }
+			SaveData();
 
-        SaveData();
+			UnityEngine.SceneManagement.SceneManager.LoadScene("game");
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("game");
+		}else{
+			Debug.LogError("Error SelectPlayerCount:" + count);
+			return;
+		}
+			
     }
 	
     public void OnToggleSelectPlayer(GameObject go)
     {
         int select = 0;
-        switch (go.name)
-        {
-            case "p1":
-                select = 1;
-                break;
-            case "p2":
-                select = 2;
-                break;
-            case "p3":
-                select = 3;
-                break;
-            default:
-                break;
-        }
+		switch (go.name)
+		{
+		case "p1":
+			select = 1;
+			break;
+		case "p2":
+			select = 2;
+			break;
+		case "p3":
+			select = 3;
+			break;
+		case "p4":
+			select = 4;
+			break;
+		default:
+			break;
+		}
 
         GameManager.Instance.SelectPlayerCount = select;
     }
@@ -67,8 +72,8 @@ public class UILogin : MonoBehaviour {
         {
             index--;
         }
-        index = index <= 0 ? 1 : index;
-        index = index >= 4 ? 3 : index;
+        index = index <= 2 ? 2 : index;
+        index = index >= 4 ? 4 : index;
 
         lastToggle.Set(false);
         UIToggle curToggle = getToggleByIndex(index);
@@ -90,6 +95,9 @@ public class UILogin : MonoBehaviour {
             case 3:
                 toggle = m_toggleP3;
                 break;
+		case 4:
+			toggle = m_toggleP4;
+			break;
             default:
                 break;
         }
@@ -110,6 +118,9 @@ public class UILogin : MonoBehaviour {
             case "p3":
                 select = 3;
                 break;
+		case "p4":
+			select = 4;
+			break;
             default:
                 break;
         }

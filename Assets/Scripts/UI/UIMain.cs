@@ -45,6 +45,7 @@ public class UIMain : MonoBehaviour {
 
 	public void ShowPauseUI(bool value)
 	{
+		if(m_pauseUI.activeSelf!=value)
 		m_pauseUI.SetActive(value);
 	}
 
@@ -52,7 +53,7 @@ public class UIMain : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(!GameManager.Instance.IsPause && !m_LevelManager.m_isGameOver)
+		if(!GameManager.Instance.IsPause && !m_LevelManager.IsGameOver)
 		{
 			m_LevelManager.currentTimer+=Time.deltaTime;
 			float p = m_LevelManager.currentTimer/m_LevelManager.MaxTime;
@@ -77,6 +78,20 @@ public class UIMain : MonoBehaviour {
 			else{
 				GameManager.Instance.ResumeGame();
 				LevelManager.Instance.ResumeGame();
+			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.Joystick1Button9)
+			|| Input.GetKeyDown(KeyCode.Joystick2Button9)
+			|| Input.GetKeyDown(KeyCode.Joystick3Button9)
+		)
+		{
+			if(LevelManager.Instance.IsGameOver)
+			{
+				LevelManager.Instance.ClearAll();
+				GameManager.Instance.ResetGame();
+				UnityEngine.SceneManagement.SceneManager.LoadScene("login");
+
 			}
 		}
 	}

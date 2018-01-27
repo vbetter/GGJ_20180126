@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : Template.MonoSingleton<GameManager> {
 
-    public int SelectPlayerCount = 1;//选择玩家人数
+    public int SelectPlayerCount = 2;//选择玩家人数
 
     bool m_isPause = false;
     public bool IsPause
@@ -46,6 +46,8 @@ public class GameManager : Template.MonoSingleton<GameManager> {
 
 	public void ResetGame()
 	{
-		
+		IsPause = false;
+		SelectPlayerCount = 2;
 	}
+		
 }

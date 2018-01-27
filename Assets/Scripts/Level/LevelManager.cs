@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 public class LevelManager : Template.MonoSingleton<LevelManager>
 {
 
-    public bool m_isGameOver = false;
-
     public int CurLevel = 1;
 
     [SerializeField]
@@ -27,40 +25,112 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
     public Ball m_ball = null;
 
+	Dictionary <ePlayerType ,Vector3 > m_posDic = new Dictionary<ePlayerType, Vector3>();
+
     // Use this for initialization
     void Start()
     {
         SceneManager.activeSceneChanged += OnSceneChanged;
 
-        InitLevel();
+        //InitLevel();
 
 
     }
 
     void OnSceneChanged(Scene lastScene, Scene curScene)
     {
-        if (curScene.name == "game")
-        {
-            InitLevel();
-            print("game");
-        }
-        else if (curScene.name == "login")
-        {
-            print("login");
-        }
+		if(curScene.name == "game")
+		{
+			GameObject ui =GameObject.Find("UIMainPanel");
+			m_main = ui.GetComponent<UIMain>();
+
+			if (curScene.name == "game")
+			{
+				InitLevel();
+				print("game");
+			}
+			else if (curScene.name == "login")
+			{
+				print("login");
+			}	
+		}
 
     }
+
+	/// <summary>
+
 
     /// <summary>
     /// 初始化关卡数据
     /// </summary>
     public void InitLevel()
     {
-        initPlayers();
-        initBall();
+		ClearAll();
 
+		initPos();
+		initBall();
+        initPlayers();
 
     }
+
+	void initPos()
+	{
+		foreach (var item in PosArray) 
+		{
+			
+			if(item.name =="p1")
+			{
+				m_posDic.Add(ePlayerType.Programmer,item.transform.localPosition);
+			}else if(item.name =="p2")
+			{
+				m_posDic.Add(ePlayerType.Planner,item.transform.localPosition);
+			}
+			else if(item.name =="p3")
+			{
+				m_posDic.Add(ePlayerType.Artist,item.transform.localPosition);
+			}
+			else if(item.name =="p4")
+			{
+				m_posDic.Add(ePlayerType.Boss,item.transform.localPosition);
+			}
+		}
+	}
+
+	public void ClearAll()
+	{
+		IsGameOver = false;
+		m_posDic.Clear();
+
+		ClearBall();
+		ClearPlayers();
+		ClearEnemies();
+	}
+
+	void ClearBall()
+	{
+		if(m_ball!=null)
+		{
+			GameObject.Destroy(m_ball.gameObject);
+			m_ball = null;
+		}
+	}
+
+	void ClearEnemies()
+	{
+		
+	}
+
+	void ClearPlayers()
+	{
+		if(AllPlayerList!=null && AllPlayerList.Count>0)
+		{
+			for (int i = AllPlayerList.Count-1; i >=0; i--) 
+			{
+				Player player = AllPlayerList[i];
+				GameObject.Destroy(player.gameObject);
+			}
+		}
+	}
 
     void initBall()
     {
@@ -72,7 +142,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
         }
     }
 
-    public void Clear()
+    public void ClearPlayrs()
     {
         if (m_playerList.Count > 0)
         {
@@ -86,12 +156,12 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
         }
     }
 
-    public void RemovePlayer(int index)
+	public void RemovePlayer(ePlayerType index)
     {
         for (int i = 0; i < m_playerList.Count; i++)
         {
             Player player = m_playerList[i];
-            if (player.PlayerNumber == index)
+            if (player.PlayerType == index)
             {
                 player.RemoveSelf();
                 m_playerList.Remove(player);
@@ -106,27 +176,32 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
     /// </summary>
     void initPlayers()
     {
-        Clear();
-
         int count = GameManager.Instance.SelectPlayerCount;
 
-        GameObject[] posArray = GetPlayerBirthPosition();
-        if (posArray == null || posArray.Length < count)
+		if (PosArray == null || PosArray.Length < count)
         {
             Debug.LogError("BirthPosition init Error");
             return;
         }
 
-        if (count > 0 && count <= 4)
+        if (count >= 2 && count <= 4)
         {
             for (int i = 0; i < count; i++)
             {
-                GameObject go = CreatePlayer((ePlayerType)i);
+				ePlayerType playerType = (ePlayerType)i;
+
+				if(i==count-1)
+				{
+					//必须有一个boss
+					playerType  = ePlayerType.Boss;
+				}
+
+				GameObject go = CreatePlayer(playerType);
                 if (go != null)
                 {
-                    go.transform.localPosition = posArray[i].transform.localPosition;
+					go.transform.localPosition = GetBirtPositionByPlayerType(playerType);
                     Player player = go.GetComponent<Player>();
-                    player.Init(i + 1);
+					player.Init(playerType,i+1);
                     m_playerList.Add(player);
                     EffectMgr.Instance.CreateEffect(eEffectType.Birth, null, 1f, player.transform.localPosition);
                 }
@@ -164,22 +239,41 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
         return go;
     }
 
+	GameObject[] m_posArray = null;
+	GameObject[] PosArray
+	{
+		get
+		{
+			if(m_posArray==null)
+			{
+				m_posArray = GameObject.FindGameObjectsWithTag("BirthPosition");
+			}
+			return m_posArray;
+		}
+	}
+    
+	Vector3 GetBirtPositionByPlayerType(ePlayerType type)
+	{
+		Vector3 pos = Vector3.zero;
 
-    GameObject[] GetPlayerBirthPosition()
-    {
-        GameObject[] childs = GameObject.FindGameObjectsWithTag("BirthPosition");
-        return childs;
+		m_posDic.TryGetValue(type,out pos);
 
-    }
+		return pos;
+	}
 
 	#region 暂停/恢复
 	[SerializeField]
 	UIMain m_main;
+
+	public bool IsGameOver =false;
 	public void GameOver()
 	{
-		GameManager.Instance.IsPause = true;
-
-		m_main.ShowGameOver();
+		if(IsGameOver == false)
+		{
+			GameManager.Instance.IsPause = true;
+			IsGameOver = true;
+			m_main.ShowGameOver();	
+		}
 	}
 
 
@@ -199,10 +293,21 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 	#region 倒计时
 
 	public float currentTimer =0f;
-	public float MaxTime = 30f;
+	public float MaxTime = 120f;
 
 
 
 	#endregion
 
+
+	public Vector3 GetPlayerPositionByColor(eColor color)
+	{
+		foreach (var item in AllPlayerList) {
+			if(item.PlayerType!= ePlayerType.Boss && item.Color == color)
+			{
+				return item.transform.localPosition;
+			}
+		}
+		return Vector3.zero;
+	}
 }

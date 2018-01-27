@@ -14,11 +14,36 @@ public class Ball : MonoBehaviour {
     void Start () {
         m_BoxCollider2D = GetComponent<BoxCollider2D>();
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
+
+
     }
-	
+
+	float m_lastY =0;
 	// Update is called once per frame
 	void Update () {
-		
+		if(!GameManager.Instance.IsPause && !LevelManager.Instance.IsGameOver)
+		{
+			if(m_Rigidbody2D.velocity.y!=0)
+			{
+				if(transform.localPosition.y > m_lastY)
+				{
+					if(!Physics2D.GetIgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform")))
+					{
+						Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform"));
+					}
+				}
+				else
+				{
+					if(Physics2D.GetIgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform")))
+					{
+						Physics2D.SetLayerCollisionMask(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform"));
+					}
+				}
+			}
+			m_lastY = transform.localPosition.y	;
+
+			Debug.Log(m_Rigidbody2D.velocity.y);
+		}
 	}
 
 	public void Init(eColor color)

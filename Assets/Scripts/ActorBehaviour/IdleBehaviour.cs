@@ -28,11 +28,10 @@ public class IdleBehaviour : EnemyBehaviour
         }
         else
         {
-            if (m_stayTime > 2f && !m_isChoose)
+            if (m_stayTime > 0.5f && !m_isChoose)
             {
                 m_isChoose = true;
 
-                int random = 1;// Random.Range(0, 3);
 
                 m_self.SetState(eActorState.Patrol);
             }

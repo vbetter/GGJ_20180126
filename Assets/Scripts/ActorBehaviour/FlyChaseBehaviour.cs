@@ -15,6 +15,8 @@ namespace IGame
 
         Vector3 m_randomPos = Vector3.zero;//随机移动的坐标点
 
+
+
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -26,6 +28,37 @@ namespace IGame
         {
             base.OnStateUpdate(animator, stateInfo, layerIndex);
 
+			if(m_self.IsEnableMove())
+			{
+				Vector3 start = m_self.m_startPos;
+				Vector3 end = m_self.m_endPos;
+
+				if(m_self.transform.localPosition.x == m_self.m_endPos.x && m_self.transform.localScale.x>0)
+				{
+					//转身
+					m_self.Flip();
+
+					end = m_self.m_startPos;
+
+				}else if(m_self.transform.localPosition.x == m_self.m_startPos.x && m_self.transform.localScale.x<0)
+				{
+					//转身
+					m_self.Flip();
+
+					end = m_self.m_endPos;
+
+				}
+					
+				//向目标移动
+	
+
+				m_self.transform.localPosition=new Vector3(Mathf.Lerp(start.x, end.x, Time.time*0.1f), 
+					m_self.transform.localPosition.y, m_self.transform.localPosition.z);
+
+			}
+
+			/*
+			 * 
             if(m_checkTargeTimer<m_checkTargeMax)
             m_checkTargeTimer += Time.deltaTime;
 
@@ -74,6 +107,9 @@ namespace IGame
                     }
                 }           
             }
+
+			*/
+
         }
 
         /// <summary>

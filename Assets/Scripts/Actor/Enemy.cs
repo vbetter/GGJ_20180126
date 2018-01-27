@@ -32,6 +32,11 @@ public class Enemy : Actor
 
     public bool HasAttack = false;//是否能够攻击
 
+
+	public Vector3 m_startPos = new Vector3(-9.24f,5f,0);
+
+	public Vector3 m_endPos =new Vector3(-3.46f,5f,0);
+
     private void Awake()
     {
         groundCheck = transform.Find("groundCheck");
@@ -62,6 +67,17 @@ public class Enemy : Actor
        
     }
 
+	/// <summary>
+	/// 是否能够移动
+	/// </summary>
+	/// <returns><c>true</c> if this instance is enable move; otherwise, <c>false</c>.</returns>
+	public bool IsEnableMove()
+	{
+		if(LevelManager.Instance.IsGameOver || GameManager.Instance.IsPause)
+			return false;
+
+		return true;
+	}
 
     public void Flip()
     {

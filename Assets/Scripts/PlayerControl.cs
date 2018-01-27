@@ -5,9 +5,10 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour {
 
     float m_interval = 0;
-
-    [SerializeField]
     float m_interval_Max = 0.5f;
+
+	float m_interval2 = 0;
+	float m_interval_Max2 = 5f;
 
     const string KeyFire1 = "Fire1";
 
@@ -43,22 +44,47 @@ public class PlayerControl : MonoBehaviour {
             m_interval += Time.deltaTime;
         }
 
-		if(!m_GameManager.IsPause)
+		if(m_interval2<= m_interval_Max2)
+		{
+			m_interval2 += Time.deltaTime;
+		}
+
+		if(!m_GameManager.IsPause && !LevelManager.Instance.IsGameOver)
 		{
 			if ((Input.GetKey(Utils.GetKeyCodeByPlayer(KeyFire1, m_PlayerNumber))) && m_interval>= m_interval_Max)
 			{
-				m_interval = 0;
-				//Debug.Log(m_fireName);
-				PlaySkill();
-			}	
+				if(m_player.IsController)
+				{
+					m_interval = 0;
+					//Debug.Log(m_fireName);
+					PlaySkill();
+				}
+			}
+
+			//boss额外多一个技能
+			if(m_player.PlayerType == ePlayerType.Boss)
+			{
+				if((Input.GetKey(Utils.GetKeyCodeByPlayer("Fire2", m_PlayerNumber))) && m_interval2>= m_interval_Max2)
+				{
+					m_interval2 = 0;
+					StartCoroutine(m_player.Transmission());
+				}
+			}
 		}
 
     }
 
     void PlaySkill()
     {
-        //Instantiate(bomb, transform.position, transform.rotation,transform);
-        //捡球、扔球
-        m_player.PushBall();
+		if(m_player.PlayerType== ePlayerType.Boss)
+		{
+			m_player.ChangeColor();
+		}
+		else
+		{
+			//捡球、扔球
+			m_player.PushBall();
+		}
+
     }
 }

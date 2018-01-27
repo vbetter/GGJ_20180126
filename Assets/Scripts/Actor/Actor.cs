@@ -43,10 +43,10 @@ public enum ePosistion
 /// </summary>
 public enum eColor
 {
-	None,
 	Blue,
 	Red,
-	Yellow
+	Yellow,
+	None
 }
 
 

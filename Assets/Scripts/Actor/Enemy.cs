@@ -91,7 +91,7 @@ public class Enemy : Actor
     {
         GameObject go = collision.gameObject;
         string log = string.Format("go : {0} , tag : {1}",go.name ,go.tag);
-        //Debug.LogError(log);
+        Debug.LogError(log);
         if (go.tag == "Player")
         {
             BulletMsg msg = new BulletMsg();

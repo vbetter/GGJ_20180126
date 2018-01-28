@@ -444,6 +444,16 @@ namespace CreativeSpore.SmartColliders
                         {
                             Vector3 gravity = Physics2D.gravity * (m_rigidBody2D.gravityScale == 0f ? 1f : m_rigidBody2D.gravityScale);
                             Vector3 locJumpVeloc = m_jumpSpeed * transform.up;
+
+                            if(locJumpVeloc.x>0)
+                            {
+                                //locJumpVeloc -= new Vector3(2f, 0, 0);
+                            }
+                            else
+                            {
+                                //locJumpVeloc += new Vector3(2f, 0, 0);
+                            }
+
                             transform.position += locJumpVeloc * Time.deltaTime + 0.5f * gravity * Time.deltaTime * Time.deltaTime;
                             m_jumpSpeed = Mathf.Max(0f, m_jumpSpeed - (gravity.magnitude + m_rigidBody2D.drag * JumpDragFactor) * Time.deltaTime);
                             if (m_jumpSpeed < Vector3.kEpsilon) m_jumpSpeed = 0f;

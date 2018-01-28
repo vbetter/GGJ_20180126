@@ -14,6 +14,7 @@ public enum eActorState
     Patrol,//巡逻
     Coma,//昏迷
     Attack,//攻击
+    Drop,坠落
 }
 
 public enum eBuffState

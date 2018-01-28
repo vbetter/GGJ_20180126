@@ -164,6 +164,8 @@ public abstract class UITweener : MonoBehaviour
 	protected void Update () { if (!useFixedUpdate) DoUpdate(); }
 	protected void FixedUpdate () { if (useFixedUpdate) DoUpdate(); }
 
+    public System.Action OnPopEndEvent = null;
+
 	/// <summary>
 	/// Update the tweening factor and call the virtual update function.
 	/// </summary>
@@ -200,14 +202,20 @@ public abstract class UITweener : MonoBehaviour
 			{
 				mFactor = 1f - (mFactor - Mathf.Floor(mFactor));
 				mAmountPerDelta = -mAmountPerDelta;
-			}
+
+                if(OnPopEndEvent!=null) OnPopEndEvent();
+
+            }
 			else if (mFactor < 0f)
 			{
 				mFactor = -mFactor;
 				mFactor -= Mathf.Floor(mFactor);
 				mAmountPerDelta = -mAmountPerDelta;
-			}
-		}
+
+                if (OnPopEndEvent != null) OnPopEndEvent();
+
+            }
+        }
 
 		// If the factor goes out of range and this is a one-time tweening operation, disable the script
 		if ((style == Style.Once) && (duration == 0f || mFactor > 1f || mFactor < 0f))

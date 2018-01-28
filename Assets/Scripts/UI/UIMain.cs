@@ -8,9 +8,6 @@ public class UIMain : MonoBehaviour {
 	UISlider m_sider;
 
 	[SerializeField]
-	GameObject m_fails;
-
-	[SerializeField]
 	GameObject m_resetBtn;
 
 	[SerializeField]
@@ -18,30 +15,45 @@ public class UIMain : MonoBehaviour {
 
 	LevelManager m_LevelManager;
 
-	// Use this for initialization
-	void Start () {
-		m_fails.SetActive(false);
+    [SerializeField]
+    UILabel m_title;
 
-		UIEventListener.Get(m_resetBtn).onClick = OnClickStartGame;
+    [SerializeField]
+    GameObject m_CatchersVectory;
+
+    [SerializeField]
+    GameObject m_ProtectersVectory;
+
+    // Use this for initialization
+    void Start () {
+        m_CatchersVectory.SetActive(false);
+        m_ProtectersVectory.SetActive(false);
 
 		m_LevelManager = LevelManager.Instance;
-	}
 
-	public void ShowGameOver()
-	{
-		Debug.Log("UI Game Over");
-		m_fails.SetActive(true);
-	}
+        AudioManager.Instance.PlayBackgroundMusic(Sound.BG_Fight);
+    }
 
-	public void ShowStartGame()
-	{
-		m_fails.SetActive(false);
-	}
+    public void ResetUI()
+    {
+        m_CatchersVectory.SetActive(false);
+        m_ProtectersVectory.SetActive(false);
 
-	void OnClickStartGame(GameObject go)
-	{
-		
-	}
+        AudioManager.Instance.PlayBackgroundMusic(Sound.BG_Fight);
+
+    }
+
+    public void ShowProtectersVectory(bool value)
+    {
+        if(value!= m_ProtectersVectory.activeSelf)
+        m_ProtectersVectory.SetActive(true);
+    }
+
+    public void ShowCatchersVectory(bool value)
+    {
+        if (value != m_ProtectersVectory.activeSelf)
+            m_CatchersVectory.SetActive(true);
+    }
 
 	public void ShowPauseUI(bool value)
 	{
@@ -55,13 +67,16 @@ public class UIMain : MonoBehaviour {
 	{
 		if(!GameManager.Instance.IsPause && !m_LevelManager.IsGameOver)
 		{
-			m_LevelManager.currentTimer+=Time.deltaTime;
-			float p = m_LevelManager.currentTimer/m_LevelManager.MaxTime;
-			m_sider.value = p;
+			m_LevelManager.currentTimer-=Time.deltaTime;
+			//float p = m_LevelManager.currentTimer/m_LevelManager.MaxTime;
+			//m_sider.value = p;
 
-			if(m_LevelManager.currentTimer>=m_LevelManager.MaxTime)
+            m_title.text = string.Format("Protect eggs for {0} seconds",LevelManager.Instance.currentTimer.ToString("f1"));
+
+
+            if (m_LevelManager.currentTimer<=0)
 			{
-				m_LevelManager.GameOver();
+				m_LevelManager.GameOver(true);
 			}
 		}
 
@@ -70,15 +85,21 @@ public class UIMain : MonoBehaviour {
 			|| Input.GetKeyDown(KeyCode.Joystick3Button12)
 		)
 		{
-			if(!GameManager.Instance.IsPause)
-			{
-				GameManager.Instance.PauseGame();
-				LevelManager.Instance.PauseGame();
-			}
-			else{
-				GameManager.Instance.ResumeGame();
-				LevelManager.Instance.ResumeGame();
-			}
+            if (LevelManager.Instance.IsGameOver)
+            {
+                LevelManager.Instance.ReplayGame();
+                return;
+            }
+            else
+            {
+                if (GameManager.Instance.IsPause)
+                {
+                    LevelManager.Instance.ClearAll();
+                    GameManager.Instance.ResetGame();
+                    UnityEngine.SceneManagement.SceneManager.LoadScene("login");
+                }
+            }
+              
 		}
 
 		if (Input.GetKeyDown(KeyCode.Joystick1Button9)
@@ -92,7 +113,20 @@ public class UIMain : MonoBehaviour {
 				GameManager.Instance.ResetGame();
 				UnityEngine.SceneManagement.SceneManager.LoadScene("login");
 
-			}
+            }
+            else
+            {
+                if (!GameManager.Instance.IsPause)
+                {
+                    GameManager.Instance.PauseGame();
+                    LevelManager.Instance.PauseGame();
+                }
+                else
+                {
+                    GameManager.Instance.ResumeGame();
+                    LevelManager.Instance.ResumeGame();
+                }
+            }
 		}
 	}
 }

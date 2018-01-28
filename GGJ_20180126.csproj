@@ -260,6 +260,11 @@
     <Compile Include="Assets\Scripts\Actor\Enemy.cs" />
     <Compile Include="Assets\Scripts\Actor\FlyEnemy.cs" />
     <Compile Include="Assets\Scripts\Actor\Player.cs" />
+    <Compile Include="Assets\Scripts\Actor\Player\PlayerArtist.cs" />
+    <Compile Include="Assets\Scripts\Actor\Player\PlayerBoss.cs" />
+    <Compile Include="Assets\Scripts\Actor\Player\PlayerPlanner.cs" />
+    <Compile Include="Assets\Scripts\Actor\Player\PlayerProgrammer.cs" />
+    <Compile Include="Assets\Scripts\Actor\StandEnemy.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\AttackBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\BaseBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\ChaseBehaviour.cs" />
@@ -277,19 +282,24 @@
     <Compile Include="Assets\Scripts\ActorBehaviour\ScrollBehaviour.cs" />
     <Compile Include="Assets\Scripts\ActorBehaviour\SnowBehaviour.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
+    <Compile Include="Assets\Scripts\Bullet\Ball.cs" />
     <Compile Include="Assets\Scripts\Bullet\BossBullet.cs" />
+    <Compile Include="Assets\Scripts\Bullet\SmallBullt.cs" />
     <Compile Include="Assets\Scripts\Common\MonoSingleton.cs" />
     <Compile Include="Assets\Scripts\Effect\EffectMgr.cs" />
     <Compile Include="Assets\Scripts\Effect\PoolManager.cs" />
     <Compile Include="Assets\Scripts\Effect\SpawnPool.cs" />
+    <Compile Include="Assets\Scripts\EventDispatcher.cs" />
     <Compile Include="Assets\Scripts\Level\LevelManager.cs" />
     <Compile Include="Assets\Scripts\Level\SpawnTrigger.cs" />
     <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\PlayerControl.cs" />
+    <Compile Include="Assets\Scripts\Preloads.cs" />
     <Compile Include="Assets\Scripts\UI\UIFight.cs" />
     <Compile Include="Assets\Scripts\UI\UILevelTips.cs" />
     <Compile Include="Assets\Scripts\UI\UILogin.cs" />
+    <Compile Include="Assets\Scripts\UI\UIMain.cs" />
     <Compile Include="Assets\Scripts\UI\UIPause.cs" />
     <Compile Include="Assets\Scripts\Util\Utils.cs" />
   </ItemGroup>
@@ -297,6 +307,7 @@
     <None Include="Assets\CreativeSpore\SmartColliders2D\Extra\Readme.txt" />
     <None Include="Assets\CreativeSpore\SmartColliders2D\Extra\Tutorials\Tutorial01\Gfx\Readme.txt" />
     <None Include="Assets\CreativeSpore\SmartColliders2D\changelog.txt" />
+    <None Include="Assets\DynamicElements_Effects\readme.txt" />
     <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
     <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />
     <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />

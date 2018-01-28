@@ -18,6 +18,10 @@ public enum eEffectType
 	Birth,//出生特效
     [Description("Effects/Boom")]
     Boom,//爆炸特效
+    [Description("Effects/ManaRegenerationBlue")]
+    ManaRegenerationBlue,//传送
+    [Description("Effects/ShieldEffectSubtleGold")]
+    ShieldEffectSubtleGold,//传送门
     Max
 }
 
@@ -28,9 +32,16 @@ public class EffectMgr : Template.MonoSingleton<EffectMgr>
 	private Dictionary<eEffectType, float> mEffectDuration = new Dictionary<eEffectType, float>();
 	public Dictionary<eEffectType, float> mEffectLastPlayTime = new Dictionary<eEffectType, float>();
 
+    bool m_isInit = false;
+
 	public virtual IEnumerator LoadData()
 	{
-		LoadEffectToPool();
+        if(!m_isInit)
+        {
+            LoadEffectToPool();
+
+            m_isInit = true;
+        }
 		yield return null;
 	}
 

@@ -22,6 +22,7 @@ namespace Template
                     if (m_Instance == null)
                     {
                         m_Instance = new GameObject("Singleton of " + typeof(T).ToString(), typeof(T)).GetComponent<T>();
+                        DontDestroyOnLoad(m_Instance);
                     }
 
                 }

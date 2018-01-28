@@ -46,6 +46,12 @@ public class Player : Actor
 
     Ball m_ball = null;
 
+    [SerializeField]
+    SpriteRenderer m_sprite;
+
+    [SerializeField]
+    Sprite m_green, m_blue, m_yellow, m_red;
+
     // Use this for initialization
     void Start () {
 
@@ -58,6 +64,7 @@ public class Player : Actor
 
         m_SmartPlatformCollider = GetComponent<SmartPlatformCollider>();
         m_SmartPlatformCollider.OnSideCollision = OnSideCollisionDelegate;
+
     }
 
 	public void Init(ePlayerType type,int psIndex)
@@ -69,6 +76,11 @@ public class Player : Actor
 
         m_PlayerControl = GetComponent<PlayerControl>();
 		m_PlayerControl.Init(psIndex);
+
+        if(PlayerType == ePlayerType.Boss)
+        {
+            StartCoroutine(ShowTalk(0));
+        }
     }
 
     public void OnDie()
@@ -80,31 +92,56 @@ public class Player : Actor
 
     public override void OnHit(BulletMsg msg)
     {
-        if (CurrentState == eActorState.Coma)
-            return;
-
-        HP -= msg.damage;
-        Debug.Log(string.Format("{0} OnHit ,HP:{1}",gameObject.name,HP));
-        EffectMgr.Instance.CreateEffect(eEffectType.Boom, null, 1f, transform.localPosition);
-
-        if (HP <= 0 && CurrentState != eActorState.Coma)
+        //蛋会掉落
+        if (m_ball != null)
         {
-            SetState(eActorState.Coma);
+            //手上有球
+            m_ball.m_Rigidbody2D.simulated = true;
+            m_ball.transform.parent = null;
+            m_ball = null;
+        }
+
+        //玩家跌落
+        if(CurrentState!= eActorState.Drop)
+        {
+            CurrentState = eActorState.Drop;
+
+            m_SmartPlatformCollider.EnableCollision2D = false;
+            m_SmartPlatformCollider.EnableCollision3D = false;
         }
     }
 
-	private void OnTriggerEnter2D(Collider2D collision)
+    private void Update()
+    {
+        if(CurrentState == eActorState.Drop && !GameManager.Instance.IsPause && !LevelManager.Instance.IsGameOver)
+        {
+            if(transform.localPosition.y<= -4.5f)
+            {
+                CurrentState = eActorState.Idle;
+
+                m_SmartPlatformCollider.EnableCollision2D = true;
+                m_SmartPlatformCollider.EnableCollision3D = true;
+            }
+
+            if(m_isTalking && m_talkRender!=null)
+            {
+                m_talkRender.transform.localScale = new Vector3(transform.localScale.x* m_talkRender.transform.localScale.x, m_talkRender.transform.localScale.y, m_talkRender.transform.localScale.z);
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
 	{
 		GameObject go = collision.gameObject;
-		string log = string.Format("go : {0} , tag : {1}",gameObject.name ,go.tag);
-		Debug.Log(log);
+		//string log = string.Format("go : {0} , tag : {1}",gameObject.name ,go.tag);
+		//Debug.Log(log);
 		if (go.tag == "Ball")
 		{
             if (gameObject.tag == "Boss")
             {
 				//如果我是boss，并且我碰到了蛋，游戏结束
                 Debug.Log("Game Over");
-				LevelManager.Instance.GameOver();
+				LevelManager.Instance.GameOver(false);
 
             }
 		}else if(go.tag =="Boss")
@@ -114,7 +151,7 @@ public class Player : Actor
 			{
 				Debug.Log("Game Over");
 
-				LevelManager.Instance.GameOver();
+				LevelManager.Instance.GameOver(false);
 
 			}
 		}
@@ -175,11 +212,11 @@ public class Player : Actor
             Vector2 toPos = Vector2.zero;
             if(transform.localScale.x>0)
             {
-                toPos = new Vector2(500f, 300f);
+                toPos = new Vector2(600f, 500f);
             }
             else if(transform.localScale.x < 0)
             {
-                toPos = new Vector2(-500f, 300f);
+                toPos = new Vector2(-600f, 500f);
             }
             m_ball.m_Rigidbody2D.AddForce(toPos);
             m_ball = null;
@@ -207,6 +244,9 @@ public class Player : Actor
 	/// </summary>
 	public void ChangeColor()
 	{
+        if (PlayerType != ePlayerType.Boss)
+            return;
+
 		int color =(int)Color ;
 		color++;
 		if(color>(int)eColor.None)
@@ -216,9 +256,25 @@ public class Player : Actor
 		Color = (eColor)color ;
 		Debug.Log("ChangeColor:"+Color);
 
-		//改变颜色
-
-	}
+        //改变颜色
+        switch (Color)
+        {
+            case eColor.Blue:
+                m_sprite.sprite = m_blue;
+                break;
+            case eColor.Red:
+                m_sprite.sprite = m_red;
+                break;
+            case eColor.Yellow:
+                m_sprite.sprite = m_yellow;
+                break;
+            case eColor.None:
+                m_sprite.sprite = m_green;
+                break;
+            default:
+                break;
+        }
+    }
 
 
 	bool m_isTransmissionING = false;
@@ -229,19 +285,30 @@ public class Player : Actor
 	{
 		//如果正在传送
 		if(m_isTransmissionING )
-			yield break;
+        {
+            StartCoroutine(ShowTalk(1));
+            yield break;
+        }
+			
 		
-		if(Color == eColor.None)
-			yield break;
+		if(Color == eColor.None || LevelManager.Instance.IsHaveColorByPlayer(Color) == false)
+        {
+            StartCoroutine(ShowTalk(1));
+            yield break;
+        }
 		
 		Vector3 pos = LevelManager.Instance.GetPlayerPositionByColor(Color);
 		if(pos!=Vector3.zero)
 		{
-			m_SmartPlatformCollider.EnableCollision2D = false;
+            Vector3 offset = new Vector3(0, -1f, 0f);
+            EffectMgr.Instance.CreateEffect(eEffectType.ManaRegenerationBlue, null, 3f, transform.localPosition + offset);
+            EffectMgr.Instance.CreateEffect(eEffectType.ShieldEffectSubtleGold, null, 3f, pos+ offset);
+
+            m_SmartPlatformCollider.EnableCollision2D = false;
 			m_SmartPlatformCollider.EnableCollision3D = false;
 			m_Rigidbody2D.simulated = false;
 			m_isTransmissionING = true;
-			yield return new WaitForSeconds(1.5f);
+			yield return new WaitForSeconds(3f);
 			Debug.Log("Transmission pos:"+pos);
 			transform.localPosition = new Vector3(pos.x,pos.y+0.5f,pos.z);
 
@@ -267,4 +334,33 @@ public class Player : Actor
 			return true;
 		}
 	}
+
+    [SerializeField]
+    Sprite[] m_talkArray;
+
+    [SerializeField]
+    SpriteRenderer m_talkRender;
+
+    bool m_isTalking = false;
+
+    IEnumerator ShowTalk(int random =0)
+    {
+        if(m_isTalking ==false)
+        {
+            if (random == 0) random = Random.Range(0, m_talkArray.Length);
+
+            if (random < m_talkArray.Length)
+            {
+                m_talkRender.sprite = m_talkArray[random];
+                m_talkRender.gameObject.SetActive(true);
+            }
+            m_isTalking = true;
+
+            yield return new WaitForSeconds(2f);
+            m_talkRender.gameObject.SetActive(false);
+            m_isTalking = false;
+        }
+
+        yield return null;
+    }
 }

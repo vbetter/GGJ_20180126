@@ -29,20 +29,20 @@ public class Ball : MonoBehaviour {
 				{
 					if(!Physics2D.GetIgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform")))
 					{
-						Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform"));
+						Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform"),true);
 					}
 				}
 				else
 				{
 					if(Physics2D.GetIgnoreLayerCollision(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform")))
 					{
-						Physics2D.SetLayerCollisionMask(LayerMask.NameToLayer("Ball"),LayerMask.NameToLayer("Platform"));
-					}
-				}
+                        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Ball"), LayerMask.NameToLayer("Platform"), false);
+                    }
+                }
 			}
 			m_lastY = transform.localPosition.y	;
 
-			Debug.Log(m_Rigidbody2D.velocity.y);
+			//Debug.Log(m_Rigidbody2D.velocity.y);
 		}
 	}
 

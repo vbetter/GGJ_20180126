@@ -27,10 +27,16 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
 	Dictionary <ePlayerType ,Vector3 > m_posDic = new Dictionary<ePlayerType, Vector3>();
 
+    bool m_isInit = false;
     // Use this for initialization
     void Start()
     {
-        SceneManager.activeSceneChanged += OnSceneChanged;
+        if(m_isInit== false)
+        {
+            SceneManager.activeSceneChanged += OnSceneChanged;
+
+            m_isInit = true;
+        }
 
         //InitLevel();
 
@@ -46,7 +52,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
 			if (curScene.name == "game")
 			{
-				InitLevel();
+				StartCoroutine(InitLevel());
 				print("game");
 			}
 			else if (curScene.name == "login")
@@ -63,18 +69,21 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
     /// <summary>
     /// 初始化关卡数据
     /// </summary>
-    public void InitLevel()
+    public IEnumerator InitLevel()
     {
 		ClearAll();
+        yield return new WaitForEndOfFrame();
 
 		initPos();
 		initBall();
         initPlayers();
 
+        yield return null;
     }
 
 	void initPos()
 	{
+       
 		foreach (var item in PosArray) 
 		{
 			
@@ -98,10 +107,12 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
 	public void ClearAll()
 	{
-		IsGameOver = false;
+        currentTimer = MaxTime;
+        m_posArray = null;
+        IsGameOver = false;
 		m_posDic.Clear();
 
-		ClearBall();
+        ClearBall();
 		ClearPlayers();
 		ClearEnemies();
 	}
@@ -128,7 +139,11 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 			{
 				Player player = AllPlayerList[i];
 				GameObject.Destroy(player.gameObject);
-			}
+                AllPlayerList.RemoveAt(i);
+
+            }
+
+
 		}
 	}
 
@@ -203,7 +218,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
                     Player player = go.GetComponent<Player>();
 					player.Init(playerType,i+1);
                     m_playerList.Add(player);
-                    EffectMgr.Instance.CreateEffect(eEffectType.Birth, null, 1f, player.transform.localPosition);
+                    EffectMgr.Instance.CreateEffect(eEffectType.Birth, null, 1f, new Vector3(player.transform.localPosition.x, player.transform.localPosition.y, 0f));
                 }
                 else
                 {
@@ -241,6 +256,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 
 	GameObject[] m_posArray = null;
 	GameObject[] PosArray
+
 	{
 		get
 		{
@@ -266,13 +282,26 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 	UIMain m_main;
 
 	public bool IsGameOver =false;
-	public void GameOver()
+
+    /// <summary>
+    /// value == true,protecters vectory
+    /// value == false,catchers vectory
+    /// </summary>
+    /// <param name="value"></param>
+	public void GameOver(bool value)
 	{
 		if(IsGameOver == false)
 		{
 			GameManager.Instance.IsPause = true;
 			IsGameOver = true;
-			m_main.ShowGameOver();	
+            if(value)
+            {
+                m_main.ShowProtectersVectory(true);
+            }
+            else
+            {
+                m_main.ShowCatchersVectory(true);
+            }
 		}
 	}
 
@@ -286,6 +315,14 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 	{
 		m_main.ShowPauseUI(false);
 	}
+
+    public void ReplayGame()
+    {
+        ClearAll();
+        GameManager.Instance.ResetGame();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("game");
+    }
+
 	#endregion
 
 
@@ -293,7 +330,7 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 	#region 倒计时
 
 	public float currentTimer =0f;
-	public float MaxTime = 120f;
+	public float MaxTime = 60f;
 
 
 
@@ -310,4 +347,16 @@ public class LevelManager : Template.MonoSingleton<LevelManager>
 		}
 		return Vector3.zero;
 	}
+
+    public bool IsHaveColorByPlayer(eColor color)
+    {
+        foreach (var item in AllPlayerList)
+        {
+            if (item.PlayerType != ePlayerType.Boss && item.Color == color)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

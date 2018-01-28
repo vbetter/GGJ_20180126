@@ -27,11 +27,12 @@ public class GameManager : Template.MonoSingleton<GameManager> {
         }
     }
 
+    bool m_isInit = false;
+
 	// Use this for initialization
 	void Start ()
     {
-        
-        StartCoroutine(EffectMgr.Instance.LoadData());
+        m_isInit = true;
     }
 	
 	public void PauseGame()

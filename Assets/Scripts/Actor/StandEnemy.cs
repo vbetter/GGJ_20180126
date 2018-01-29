@@ -45,6 +45,8 @@ public class StandEnemy : Enemy {
 
                 bullect.Init(transform.position, endPos);
             }
+
+			AudioManager.Instance.PlayGameEffectsMusic(Sound.p1);
         }
     }
 }

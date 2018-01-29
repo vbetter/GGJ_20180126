@@ -109,6 +109,9 @@ public class Player : Actor
             m_SmartPlatformCollider.EnableCollision2D = false;
             m_SmartPlatformCollider.EnableCollision3D = false;
         }
+
+		AudioManager.Instance.PlayGameEffectsMusic(Sound.d1);
+
     }
 
     private void Update()

@@ -16,6 +16,8 @@ public enum Sound
     ButtonClick,
     BG_Fight,
     Login,
+	p1,
+	d1,
     Max
 }
 
@@ -68,7 +70,7 @@ public class AudioManager : Template.MonoSingleton<AudioManager>
     }
 
     Sound currentPlayingBGMusic = Sound.Max;
-    public void PlayBackgroundMusic(Sound sound, bool isLoop = true, float volume = 0.4f, float pitch = 1.0f)    //播放背景音乐
+    public void PlayBackgroundMusic(Sound sound, bool isLoop = true, float volume = 0.7f, float pitch = 1.0f)    //播放背景音乐
     {
         if (sound == currentPlayingBGMusic) return;
         //=================================
@@ -94,7 +96,7 @@ public class AudioManager : Template.MonoSingleton<AudioManager>
         }
     }
 
-    public void PlayGameEffectsMusic(Sound sound, bool isLoop = false, float volume = 1.0f, float pitch = 1.0f, bool isRandom = false)//播放游戏音效
+    public void PlayGameEffectsMusic(Sound sound, bool isLoop = false, float volume = 0.4f, float pitch = 1.0f, bool isRandom = false)//播放游戏音效
     {
 
         //=====================
@@ -132,7 +134,7 @@ public class AudioManager : Template.MonoSingleton<AudioManager>
         }
     }
 
-    public void PlayGameEffectsMusic(AudioSource _3dAudioSource ,Sound sound, bool isLoop = false, float volume = 1.0f, float pitch = 1.0f) 
+    public void PlayGameEffectsMusic(AudioSource _3dAudioSource ,Sound sound, bool isLoop = false, float volume = 0.4f, float pitch = 1.0f) 
     {
         if (dicSound.ContainsKey(sound))
         {

@@ -81,6 +81,31 @@ public class Player : Actor
         {
             StartCoroutine(ShowTalk(0));
         }
+
+        initByPlayerType(type);
+    }
+
+    void initByPlayerType(ePlayerType type)
+    {
+        switch (type)
+        {
+            case ePlayerType.Programmer:
+                Color = eColor.Blue;
+                break;
+            case ePlayerType.Planner:
+                Color = eColor.Yellow;
+                break;
+            case ePlayerType.Artist:
+                Color = eColor.Red;
+                break;
+            case ePlayerType.Boss:
+                Color = eColor.None;
+                break;
+            case ePlayerType.None:
+                break;
+            default:
+                break;
+        }
     }
 
     public void OnDie()

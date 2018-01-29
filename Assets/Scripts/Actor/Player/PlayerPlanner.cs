@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPlanner : MonoBehaviour {
+public class PlayerPlanner : Player
+{
 
 	// Use this for initialization
 	void Start () {
